@@ -131,7 +131,7 @@ defmodule Nostrum.Util do
   end
 
   defp get_new_gateway_url do
-    case Api.request(:get, Constants.gateway_bot(), "") do
+    case Api.request(:get, Constants.gateway_bot(), "", [ssl: [{:versions, [:"tlsv1.2"]}]]) do
       {:error, %{status_code: code, message: message}} ->
         raise(Nostrum.Error.ApiError, status_code: code, message: message)
 
