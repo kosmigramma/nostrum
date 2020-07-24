@@ -1309,7 +1309,7 @@ defmodule Nostrum.Api do
   ## Options
 
     * `:user_id` (`t:Nostrum.Struct.User.id/0`) - filter the log for a user ID
-    * `:action_type` (`t:Integer.t/0`) - filter the log by audit log type, see [Audit Log Events](https://discordapp.com/developers/docs/resources/audit-log#audit-log-entry-object-audit-log-events)
+    * `:action_type` (`t:Integer.t/0`) - filter the log by audit log type, see [Audit Log Events](https://discord.com/developers/docs/resources/audit-log#audit-log-entry-object-audit-log-events)
     * `:before` (`t:Nostrum.Struct.Snowflake.t/0`) - filter the log before a certain entry ID
     * `:limit` (`t:positive_integer/0`) - how many entries are returned (default 50, minimum 1, maximum 100)
   """
@@ -1708,6 +1708,37 @@ defmodule Nostrum.Api do
   def modify_guild_member!(guild_id, user_id, options \\ %{}) do
     modify_guild_member(guild_id, user_id, options)
     |> bangify
+  end
+
+  @doc """
+  Modifies the nickname of the current user in a guild.
+
+  If successful, returns `{:ok, %{nick: nick}}`. Otherwise, returns a `t:Nostrum.Api.error/0`.
+
+  ## Options
+
+    * `:nick` (string) - value to set users nickname to
+
+  ## Examples
+
+  ```Elixir
+  Nostrum.Api.modify_current_user_nick(41771983423143937, nick: "Nostrum")
+  {:ok, %{nick: "Nostrum"}}
+  ```
+  """
+  @spec modify_current_user_nick(Guild.id(), options) :: error | {:ok, %{nick: String.t()}}
+  def modify_current_user_nick(guild_id, options \\ %{}) do
+    request(:patch, Constants.guild_me_nick(guild_id), options)
+    |> handle_request_with_decode()
+  end
+
+  @doc """
+  Same as `modify_current_user_nick/2`, but raises `Nostrum.Error.ApiError` in case of failure.
+  """
+  @spec modify_current_user_nick!(Guild.id(), options) :: no_return | %{nick: String.t()}
+  def modify_current_user_nick!(guild_id, options \\ %{}) do
+    modify_current_user_nick(guild_id, options)
+    |> bangify()
   end
 
   @doc """
@@ -2350,7 +2381,7 @@ defmodule Nostrum.Api do
   ## Options
 
     * `:username` (string) - new username
-    * `:avatar` (string) - the user's avatar as [avatar data](https://discordapp.com/developers/docs/resources/user#avatar-data)
+    * `:avatar` (string) - the user's avatar as [avatar data](https://discord.com/developers/docs/resources/user#avatar-data)
 
   ## Examples
 
